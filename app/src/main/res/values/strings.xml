@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">HostApp</string>
+    <string name="test_plugin">测试插件加载</string>
+</resources>

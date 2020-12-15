@@ -1,0 +1,4 @@
+include ':pluginlibrary'
+include ':plugin0'
+include ':app'
+rootProject.name = "HostApp"
