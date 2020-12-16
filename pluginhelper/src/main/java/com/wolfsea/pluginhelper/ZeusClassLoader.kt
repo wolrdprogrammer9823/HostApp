@@ -1,4 +1,4 @@
-package com.wolfsea.pluginlibrary.pluginhelper
+package com.wolfsea.pluginhelper
 import dalvik.system.DexClassLoader
 import dalvik.system.PathClassLoader
 

@@ -1,7 +1,7 @@
 package com.wolfsea.hostapp
 import android.app.Application
 import android.content.Context
-import com.wolfsea.pluginlibrary.pluginhelper.PluginManager
+import com.wolfsea.pluginhelper.PluginManager
 
 /**
  *@desc  自定义应用程序类
@@ -30,6 +30,7 @@ class HostApplication : Application() {
              val application : Application = clazz?.newInstance() as Application
              application.onCreate()
         }
+
     }
 
     companion object {

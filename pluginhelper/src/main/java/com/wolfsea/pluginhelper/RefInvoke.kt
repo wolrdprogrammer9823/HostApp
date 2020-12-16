@@ -1,4 +1,4 @@
-package com.wolfsea.pluginlibrary.pluginhelper
+package com.wolfsea.pluginhelper
 
 /**
  *@desc   反射调用工具类
@@ -157,9 +157,10 @@ object RefInvoke {
 
         try {
             //调用一个私有方法
-            val method = any.javaClass.getDeclaredMethod(methodName, *parseTypes)
+            val method = if (any is Class<*>) any.getDeclaredMethod(methodName, *parseTypes)
+                         else any.javaClass.getDeclaredMethod(methodName, *parseTypes)
             method.isAccessible = true
-            return method.invoke(any, *parseValues)
+            return method.invoke(if (any is Class<*>) any.newInstance() else any, *parseValues)
         } catch (e :Exception) {}
 
         return null

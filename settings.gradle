@@ -1,3 +1,5 @@
+include ':pluginhelper'
+include ':plugin1'
 include ':pluginlibrary'
 include ':plugin0'
 include ':app'

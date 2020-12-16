@@ -1,57 +1,39 @@
 package com.wolfsea.hostapp
 import android.content.Context
-import android.content.res.AssetManager
-import android.content.res.Resources
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import com.wolfsea.pluginhelper.PluginManager
+import com.wolfsea.pluginhelper.RefInvoke
 import com.wolfsea.pluginlibrary.IBean
 import com.wolfsea.pluginlibrary.ICallBack
-import com.wolfsea.pluginlibrary.pluginhelper.PluginResourcesExtractUtil
-import dalvik.system.DexClassLoader
+import com.wolfsea.pluginlibrary.IDynamic
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 
-const val SOURCE_NAME = "plugin0-debug.apk"
-
-class MainActivity : AppCompatActivity(), View.OnClickListener {
-
-    private var mDexClassLoader: DexClassLoader? = null
-
-    private var dexPath: String? = null
-    private var fileRelease: File? = null
-
-    override fun attachBaseContext(newBase: Context?) {
-
-        super.attachBaseContext(newBase)
-        try {
-            PluginResourcesExtractUtil.extractAssets(newBase, SOURCE_NAME)
-        } catch (e: Exception) {
-        }
-    }
+class MainActivity : BaseActivity(), View.OnClickListener {
 
     override fun onContentChanged() {
 
         super.onContentChanged()
+
         test_plugin_btn.setOnClickListener(this)
+        load_plugin_resource_btn.setOnClickListener(this)
+
+        load_plugin0_skin_btn.setOnClickListener(this)
+        load_plugin1_skin_btn.setOnClickListener(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val extractFile = this.getFileStreamPath(SOURCE_NAME)
-        dexPath = extractFile.path
-        fileRelease = this.getDir("dex", Context.MODE_PRIVATE)
-
-        mDexClassLoader = DexClassLoader(dexPath, fileRelease!!.absolutePath, null, classLoader)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.test_plugin_btn -> {
-
+                //加载插件中的数据
                 val classBean: Class<out Any>?
                 try {
 
@@ -85,7 +67,57 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     e.printStackTrace()
                 }
             }
+
+            R.id.load_plugin_resource_btn -> {
+
+                //加载资源
+                loadResources()
+
+                //加载插件中的资源
+                val clazzObject: Class<*>?
+                try {
+
+                    clazzObject = mDexClassLoader?.loadClass("com.wolfsea.plugin0.bean.Dynamic")
+                    val dynamic: IDynamic = clazzObject?.newInstance() as IDynamic
+                    doLog("resources:${dynamic.getStringForResId(this@MainActivity)}")
+
+                    Toast.makeText(
+                        this@MainActivity.applicationContext,
+                        "获取的插件中的资源为:${dynamic.getStringForResId(this@MainActivity)}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Exception) {}
+            }
+
+            R.id.load_plugin0_skin_btn -> {
+
+                //加载插件0皮肤
+                val pluginInfo = PluginManager.pluginsInfo[SOURCE_NAME0]
+                loadResources(pluginInfo!!.dexPath)
+                val drawable : Drawable = loadPluginSkin(pluginInfo.dexClassLoader,"com.wolfsea.plugin0.bean.UIUtil")
+                root_layout.background = drawable
+
+            }
+
+            R.id.load_plugin1_skin_btn -> {
+                //加载插件1皮肤
+                val pluginInfo = PluginManager.pluginsInfo[SOURCE_NAME1]
+                loadResources(pluginInfo!!.dexPath)
+                val drawable : Drawable = loadPluginSkin(pluginInfo.dexClassLoader,"com.wolfsea.plugin1.UIUtil")
+                root_layout.background = drawable
+            }
             else -> {}
         }
     }
+
+    /**
+     *@desc 加载插件中的皮肤
+     *@author:liuliheng
+     *@time: 2020/12/16 23:14
+    **/
+    private fun loadPluginSkin(classLoader: ClassLoader, clazzName: String): Drawable {
+        val clazz : Class<*> = classLoader.loadClass(clazzName)
+        return RefInvoke.invokeInstanceMethod(clazz, "getDrawable", Context::class.java, this)!! as Drawable
+    }
+
 }

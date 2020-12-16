@@ -1,4 +1,4 @@
-package com.wolfsea.pluginlibrary.pluginhelper
+package com.wolfsea.pluginhelper
 import android.content.Context
 import android.content.res.AssetManager
 import java.io.*

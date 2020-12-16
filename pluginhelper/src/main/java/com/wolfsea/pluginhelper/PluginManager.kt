@@ -1,4 +1,4 @@
-package com.wolfsea.pluginlibrary.pluginhelper
+package com.wolfsea.pluginhelper
 import android.app.Application
 import android.content.Context
 import android.content.res.AssetManager
@@ -13,6 +13,8 @@ import dalvik.system.DexClassLoader
 object PluginManager {
 
     val plugins : MutableList<PluginItem> = ArrayList()
+
+    val pluginsInfo: HashMap<String, PluginInfo> = HashMap()
 
     //正在使用的Resources
     @Volatile
@@ -99,6 +101,21 @@ object PluginManager {
         pluginItem.applicationName = ApplicationHelper.loadApplication(mBaseContext!!, file!!)
 
         return pluginItem
+    }
+
+    /**
+     *@desc 生产PluginInfo
+     *@author:liuliheng
+     *@time: 2020/12/16 22:23
+    **/
+    fun generatePluginInfo(context: Context,pluginName: String) {
+
+        val extractFile = context.getFileStreamPath(pluginName)
+        val releaseFile = context.getDir("dex", Context.MODE_PRIVATE)
+
+        val dexPath = extractFile.path
+        val dexClassLoader = DexClassLoader(dexPath, releaseFile.absolutePath, null, context.classLoader)
+        pluginsInfo[pluginName] = PluginInfo(dexPath, dexClassLoader)
     }
 
     /**

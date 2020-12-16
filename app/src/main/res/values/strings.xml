@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">HostApp</string>
     <string name="test_plugin">测试插件加载</string>
+    <string name="load_plugin_resource">加载插件资源</string>
+    <string name="load_plugin0_skin">加载插件0皮肤</string>
+    <string name="load_plugin1_skin">加载插件1皮肤</string>
 </resources>

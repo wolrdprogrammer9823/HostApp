@@ -1,4 +1,4 @@
-package com.wolfsea.pluginlibrary.pluginhelper
+package com.wolfsea.pluginhelper
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
